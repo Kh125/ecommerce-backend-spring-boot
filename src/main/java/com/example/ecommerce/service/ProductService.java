@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.repository.ProductRepository;
 
+import com.example.ecommerce.util.ProductUtil;
+
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
@@ -22,8 +24,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(Long productId) {
-        return productRepository.findById(productId);
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId).orElse(null);
     }
 
     public List<Product> getProductsByCategory(Long categoryId) {
@@ -38,5 +40,32 @@ public class ProductService {
         return productRepository.findByHighestAverageRating();
     }
 
-    // public 
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    public Product updateProduct(Long productId, Product updatedProduct) {
+        return productRepository.findById(productId)
+            .map(product -> {
+                if(updatedProduct.getName() != null) {
+                    product.setName(updatedProduct.getName());
+                }
+                if(updatedProduct.getDescription() != null) {
+                    product.setDescription(updatedProduct.getDescription());
+                }
+                if(updatedProduct.getPrice() != null) {
+                    product.setPrice(updatedProduct.getPrice());
+                }
+                if(updatedProduct.getStock() != null) {
+                    product.setStock(updatedProduct.getStock());
+                }
+
+                return productRepository.save(product);
+            })
+            .orElse(null);
+    }
+
+    public void deleteProduct(Long productId) {
+        productRepository.deleteById(productId);
+    }
 }
