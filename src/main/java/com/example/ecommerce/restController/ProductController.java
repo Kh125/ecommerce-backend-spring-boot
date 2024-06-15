@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.dto.CategoryRequest;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.service.ProductService;
 
@@ -69,6 +70,15 @@ public class ProductController {
 
         return updatedProduct != null ? new ResponseEntity<>(updatedProduct, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PostMapping("/updateProductCategory/{productId}")
+    public ResponseEntity<Product> postMethodName(@PathVariable Long productId, @RequestBody CategoryRequest categoryRequest) {
+        Long categoryId = categoryRequest != null ? categoryRequest.categoryId : 0;
+        Product updatedProduct = productService.updateProductCategoryByCategoryId(categoryId, productId);
+        
+        return updatedProduct != null ? new ResponseEntity<>(updatedProduct, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 
     @DeleteMapping("/deleteProduct/{id}")
     public ResponseEntity<HttpStatus> deleteProduct(@PathVariable Long id) {

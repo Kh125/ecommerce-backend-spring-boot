@@ -1,23 +1,26 @@
 package com.example.ecommerce.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.ecommerce.model.Category;
 import com.example.ecommerce.model.Product;
+import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.repository.ProductRepository;
-
-import com.example.ecommerce.util.ProductUtil;
 
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(
+        ProductRepository productRepository,
+        CategoryRepository categoryRepository
+    ) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<Product> getAllProducts() {
@@ -59,10 +62,21 @@ public class ProductService {
                 if(updatedProduct.getStock() != null) {
                     product.setStock(updatedProduct.getStock());
                 }
+                if(updatedProduct.getCategory() != null) {
+                    Category category = categoryRepository.findById(updatedProduct.getCategory().getId()).orElseThrow(() -> new RuntimeException("Category Not found"));
+                    product.setCategory(category);
+                }
 
                 return productRepository.save(product);
             })
             .orElse(null);
+    }
+
+    public Product updateProductCategoryByCategoryId(Long categoryId, Long productId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category Not found"));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product Not found"));
+        product.setCategory(category);
+        return productRepository.save(product);
     }
 
     public void deleteProduct(Long productId) {
