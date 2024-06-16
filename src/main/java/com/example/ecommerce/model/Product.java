@@ -29,22 +29,7 @@ public class Product {
 
     @ElementCollection
     private List<String> imageUrl;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToMany
-    @JoinTable(
-        name = "product_tag",
-        joinColumns = @JoinColumn(name = "product_id"),
-        inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags = new ArrayList<>();
-
-    @OneToMany(mappedBy = "product")
-    private List<Review> reviews = new ArrayList<>();
-
+    
     public String getName() {
         return name;
     }
@@ -73,10 +58,18 @@ public class Product {
         return stock;
     }
 
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setStock(Integer stock) {
         this.stock = stock;
     }
-
+    
     public List<String> getImageUrl() {
         return imageUrl;
     }
@@ -84,11 +77,11 @@ public class Product {
     public void setImageUrl(List<String> imageUrl) {
         this.imageUrl = imageUrl;
     }
-
+    
     public Category getCategory() {
         return category;
     }
-
+    
     public void setCategory(Category category) {
         this.category = category;
     }
@@ -104,8 +97,23 @@ public class Product {
     public List<Review> getReviews() {
         return reviews;
     }
-
+    
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToMany
+    @JoinTable(
+        name = "product_tag",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    private List<Review> reviews = new ArrayList<>();
 }

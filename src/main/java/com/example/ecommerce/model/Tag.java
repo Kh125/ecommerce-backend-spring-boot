@@ -20,11 +20,15 @@ public class Tag {
     private Long id;
 
     private String name;
+    
+    public Long getId() {
+        return id;
+    }
 
-    @ManyToMany(mappedBy = "tags")
-    @JsonBackReference
-    private List<Product> products = new ArrayList<>();
-
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     public String getName() {
         return name;
     }
@@ -32,7 +36,7 @@ public class Tag {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     public List<Product> getProducts() {
         return products;
     }
@@ -40,4 +44,8 @@ public class Tag {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
+    
+    @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
+    private List<Product> products = new ArrayList<>();
 }

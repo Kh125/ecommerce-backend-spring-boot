@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ecommerce.dto.CategoryRequest;
+import com.example.ecommerce.dto.ProductDto;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.service.ProductService;
 
@@ -25,34 +26,34 @@ public class ProductController {
     }
 
     @GetMapping("/getAllProducts")
-    public List<Product> getAllProducts() {
+    public List<ProductDto> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/getProductById/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        ProductDto product = productService.getProductById(id);
 
         return product != null ? new ResponseEntity<>(product, HttpStatus.OK) : new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
     
     @GetMapping("/getProductByCategory/{id}")
-    public ResponseEntity<List<Product>> getProductByCategoryId(@PathVariable Long id) {
-        List<Product> productList = productService.getProductsByCategory(id);
+    public ResponseEntity<List<ProductDto>> getProductByCategoryId(@PathVariable Long id) {
+        List<ProductDto> productList = productService.getProductsByCategory(id);
 
         return productList != null ? new ResponseEntity<>(productList, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/getProductByTagName/{tagName}")
-    public ResponseEntity<List<Product>> getProductByTag(@PathVariable String tagName) {
-        List<Product> product = productService.getProductsByTagName(tagName);
+    public ResponseEntity<List<ProductDto>> getProductByTag(@PathVariable String tagName) {
+        List<ProductDto> product = productService.getProductsByTagName(tagName);
 
         return product != null ? new ResponseEntity<>(product, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/getProductByHighestAverageRating")
-    public ResponseEntity<List<Product>> getProductByHighestAverageRating(@PathVariable Long id) {
-        List<Product> product = productService.getProductsByHighestAverageRating();
+    public ResponseEntity<List<ProductDto>> getProductByHighestAverageRating(@PathVariable Long id) {
+        List<ProductDto> product = productService.getProductsByHighestAverageRating();
 
         return product != null ? new ResponseEntity<>(product, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

@@ -1,9 +1,12 @@
 package com.example.ecommerce.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.example.ecommerce.dto.ProductDto;
 import com.example.ecommerce.model.Category;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.repository.CategoryRepository;
@@ -13,34 +16,50 @@ import com.example.ecommerce.repository.ProductRepository;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
     public ProductService(
         ProductRepository productRepository,
-        CategoryRepository categoryRepository
+        CategoryRepository categoryRepository,
+        ModelMapper modelMapper
     ) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDto> getAllProducts() {
+        return productRepository.findAll()
+            .stream()
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .collect(Collectors.toList());
     }
 
-    public Product getProductById(Long productId) {
-        return productRepository.findById(productId).orElse(null);
+    public ProductDto getProductById(Long productId) {
+        return productRepository.findById(productId)
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .orElse(null);
     }
 
-    public List<Product> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+    public List<ProductDto> getProductsByCategory(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId)
+            .stream()
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .collect(Collectors.toList());
     }
 
-    public List<Product> getProductsByTagName(String tagName) {
-        return productRepository.findByTags_Name(tagName);
+    public List<ProductDto> getProductsByTagName(String tagName) {
+        return productRepository.findByTags_Name(tagName)
+            .stream()
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .collect(Collectors.toList());
     }
 
-    public List<Product> getProductsByHighestAverageRating() {
-        return productRepository.findByHighestAverageRating();
+    public List<ProductDto> getProductsByHighestAverageRating() {
+        return productRepository.findByHighestAverageRating()
+            .stream()
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .collect(Collectors.toList());
     }
 
     public Product createProduct(Product product) {
@@ -61,10 +80,6 @@ public class ProductService {
                 }
                 if(updatedProduct.getStock() != null) {
                     product.setStock(updatedProduct.getStock());
-                }
-                if(updatedProduct.getCategory() != null) {
-                    Category category = categoryRepository.findById(updatedProduct.getCategory().getId()).orElseThrow(() -> new RuntimeException("Category Not found"));
-                    product.setCategory(category);
                 }
 
                 return productRepository.save(product);
