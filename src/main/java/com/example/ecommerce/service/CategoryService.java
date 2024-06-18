@@ -1,8 +1,12 @@
 package com.example.ecommerce.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.example.ecommerce.dto.CategoryDto;
 import com.example.ecommerce.model.Category;
 import com.example.ecommerce.repository.CategoryRepository;
 
@@ -11,34 +15,45 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(
+        CategoryRepository categoryRepository,
+        ModelMapper modelMapper
+    ) {
         this.categoryRepository = categoryRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryDto> getAllCategories() {
+        return categoryRepository.findAll()
+            .stream()
+            .map(category -> modelMapper.map(category, CategoryDto.class))
+            .collect(Collectors.toList());
     }
 
-    public Category getCategoryById(Long categoryId) {
+    public CategoryDto getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
+                .map(category -> modelMapper.map(category, CategoryDto.class))
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
     }
 
-    public Category createCategory(Category category) {
+    public Category createCategory(CategoryDto categoryDto) {
+        Category category = modelMapper.map(categoryDto, Category.class);
+        
         return categoryRepository.save(category);
     }
 
-    public Category updateCategory(Category category) {
-        if (category == null) {
+    public Category updateCategory(Long categoryId, CategoryDto categoryDto) {
+        if (categoryDto == null) {
             throw new IllegalArgumentException("Category cannot be null");
         }
         
-        Category existingCategory = categoryRepository.findById(category.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + category.getId()));
+        Category existingCategory = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
         
-        existingCategory.setName(category.getName());
-        existingCategory.setDescription(category.getDescription());
+        existingCategory.setName(categoryDto.getName());
+        existingCategory.setDescription(categoryDto.getDescription());
         
         return categoryRepository.save(existingCategory);
     }
