@@ -59,27 +59,18 @@ public class ProductController {
     }
 
     @PostMapping("/createProduct")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productDto) {
+        Product createdProduct = productService.createProduct(productDto);
 
         return createdProduct != null ? new ResponseEntity<>(createdProduct, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/updateProduct/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDto product) {
         Product updatedProduct = productService.updateProduct(id, product);
 
         return updatedProduct != null ? new ResponseEntity<>(updatedProduct, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    @PostMapping("/updateProductCategory/{productId}")
-    public ResponseEntity<Product> postMethodName(@PathVariable Long productId, @RequestBody CategoryRequest categoryRequest) {
-        Long categoryId = categoryRequest != null ? categoryRequest.categoryId : 0;
-        Product updatedProduct = productService.updateProductCategoryByCategoryId(categoryId, productId);
-        
-        return updatedProduct != null ? new ResponseEntity<>(updatedProduct, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    
 
     @DeleteMapping("/deleteProduct/{id}")
     public ResponseEntity<HttpStatus> deleteProduct(@PathVariable Long id) {

@@ -3,6 +3,10 @@ package com.example.ecommerce.dto;
 import java.util.List;
 
 public class ProductDto {
+    public ProductDto() {
+        
+    }
+
     private Long id;
 
     private String name;
@@ -21,9 +25,9 @@ public class ProductDto {
 
     private List<ReviewDto> reviews;
     
-    private Long categoryId;
+    // private Long categoryId;
 
-    private List<Long> tagsId;
+    private List<String> tagsName;
     
     private List<Long> reviewsId;
 
@@ -75,20 +79,20 @@ public class ProductDto {
         this.imageUrl = imageUrl;
     }
     
-    public Long getCategoryId() {
-        return categoryId;
+    // public Long getCategoryId() {
+    //     return categoryId;
+    // }
+    
+    // public void setCategoryId(Long categoryId) {
+    //     this.categoryId = categoryId;
+    // }
+    
+    public List<String> getTagsName() {
+        return tagsName;
     }
     
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-    
-    public List<Long> getTagsId() {
-        return tagsId;
-    }
-    
-    public void setTagsId(List<Long> tagsId) {
-        this.tagsId = tagsId;
+    public void setTagsName(List<String> tagsName) {
+        this.tagsName = tagsName;
     }
 
     public List<Long> getReviewsId() {

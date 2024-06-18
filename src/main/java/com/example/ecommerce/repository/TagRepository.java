@@ -9,5 +9,5 @@ import com.example.ecommerce.model.Tag;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long>{
-    List<Tag> findByProducts_Name(String tagName);
+    Tag findByName(String tagName);
 }
