@@ -2,6 +2,8 @@ package com.example.ecommerce.restController;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,27 +25,37 @@ public class CategoryController {
     }
 
     @GetMapping("/getAllCategories")
-    public List<CategoryDto> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        List<CategoryDto> categoryDtos = categoryService.getAllCategories();
+
+        return categoryDtos != null ? new ResponseEntity<>(categoryDtos, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/getCategoryById/{categoryId}")
-    public CategoryDto getCategoryById(@PathVariable Long categoryId) {
-        return categoryService.getCategoryById(categoryId);
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long categoryId) {
+        CategoryDto categoryDto = categoryService.getCategoryById(categoryId);
+
+        return categoryDto != null ? new ResponseEntity<>(categoryDto, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/createCategory")
-    public Category createCategory(@RequestBody CategoryDto category) {
-        return categoryService.createCategory(category);
+    public ResponseEntity<Category> createCategory(@RequestBody CategoryDto category) {
+        Category categoryDto = categoryService.createCategory(category);
+
+        return categoryDto != null ? new ResponseEntity<>(categoryDto, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/updateCategory/{categoryId}")
-    public Category updateCategory(@PathVariable Long categoryId, @RequestBody CategoryDto category) {
-        return categoryService.updateCategory(categoryId, category);
+    public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId, @RequestBody CategoryDto categoryDto) {
+        Category category = categoryService.updateCategory(categoryId, categoryDto);
+
+        return category != null ? new ResponseEntity<>(category, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/deleteCategory/{categoryId}")
-    public void deleteCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
