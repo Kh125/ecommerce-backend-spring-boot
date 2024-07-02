@@ -1,7 +1,6 @@
 package com.example.ecommerce.service;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ public class UserCRUDService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public UserCRUDService(PasswordEncoder passwordEncoder, ModelMapper modelMapper, UserRepository userRepository) {
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
@@ -28,5 +26,14 @@ public class UserCRUDService {
         registeredUser.setPassword(passwordEncoder.encode(registeredUser.getPassword()));
         
         return userRepository.save(registeredUser);
+    }
+
+    public User updateRoles(UserDto userDto, Long userId) {
+        return userRepository.findById(userId)
+            .map(user -> {
+                user.setRoles(userDto.getRoles());
+                return userRepository.save(user);
+            })
+            .orElse(null);
     }
 }

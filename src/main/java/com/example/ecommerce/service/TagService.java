@@ -31,7 +31,7 @@ public class TagService {
                     TagDto tagDto = modelMapper.map(tag, TagDto.class);
 
                     //Not to return all product list related to the tag entity
-                    tagDto.setProducts(new ArrayList<>());
+                    // tagDto.setProducts(new ArrayList<>());
                     return tagDto;
                 })
                 .collect(Collectors.toList());

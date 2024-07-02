@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,11 +27,17 @@ public class SecurityConfig {
         return http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(reg -> {
-                reg.requestMatchers("/", "/user/**").permitAll();
+                reg.requestMatchers("/", "/user/**", "/login").permitAll();
                 reg.requestMatchers("/api/**").hasRole("ADMIN");
                 reg.anyRequest().authenticated();
             })
-            .formLogin(fl -> fl.permitAll())
+            // .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+            .formLogin(fl -> {
+                fl
+                    .loginPage("/login")
+                    .successHandler(new AuthenticationSuccessHandler())
+                    .permitAll();
+            })
             .build();
     }
 
@@ -46,7 +53,6 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

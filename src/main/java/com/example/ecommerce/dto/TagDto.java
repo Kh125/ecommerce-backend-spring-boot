@@ -7,7 +7,7 @@ public class TagDto {
     
     private String name;
 
-    private List<Product> products;
+    // private List<Product> products;
 
     public Long getId() {
         return id;
@@ -22,10 +22,10 @@ public class TagDto {
         this.name = name;
     } 
 
-    public List<Product> getProducts() {
-        return products;
-    }
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+    // public List<Product> getProducts() {
+    //     return products;
+    // }
+    // public void setProducts(List<Product> products) {
+    //     this.products = products;
+    // }
 }
