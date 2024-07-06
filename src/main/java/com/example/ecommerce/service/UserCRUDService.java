@@ -20,6 +20,10 @@ public class UserCRUDService {
         this.userRepository = userRepository;
     }
     
+    public User getUserInfo(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
+
     public User registerUser(UserDto user) {
         User registeredUser = modelMapper.map(user, User.class);
         
