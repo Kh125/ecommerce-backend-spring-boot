@@ -15,20 +15,15 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     private static final String SECRET = "k2M8fJFGaKs/6nVl7KRNNaC7I1qv5Gmj2Nfj1vhiuqU=";
-    private static final long Validity = TimeUnit.MINUTES.toMillis(1440);
+    private static final long ACCESS_TOKEN_VALIDITY = TimeUnit.MINUTES.toMillis(24*60);
+    private static final long REFRESH_TOKEN_VALIDITY = TimeUnit.MINUTES.toMillis(24*7*60);
 
-    public String generateToken(String username) {
-        Map<String, String> claims = new HashMap<>();
-        claims.put("test", "khanthmue.tech");
+    public String generateAccessToken(String username) {
+        return generateToken(username, ACCESS_TOKEN_VALIDITY);
+    }
 
-        return Jwts
-                    .builder()
-                    .claims(claims)
-                    .subject(username)
-                    .issuedAt(Date.from(Instant.now()))
-                    .expiration(Date.from(Instant.now().plusMillis(Validity)))
-                    .signWith(generateKey())
-                    .compact();
+    public String generateRefreshToken(String username) {
+        return generateToken(username, REFRESH_TOKEN_VALIDITY);
     }
 
     // Utility Token functions
@@ -43,15 +38,8 @@ public class JwtService {
 
         return claims.getExpiration().after(Date.from(Instant.now()));
     }
-    // Utility Token functions
 
-    // Private Methods
-    private SecretKey generateKey() {
-        byte[] decodedKey = Base64.getDecoder().decode(SECRET);
-        return Keys.hmacShaKeyFor(decodedKey);
-    }
-
-    private Claims getClaims(String jwt) {
+    public Claims getClaims(String jwt) {
         try {
             return Jwts
                 .parser()
@@ -62,5 +50,26 @@ public class JwtService {
         } catch (Exception e) {
             throw new RuntimeException("Invalid JWT Token");
         }
+    }
+    // Utility Token functions
+
+    // Private Methods
+    private SecretKey generateKey() {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET);
+        return Keys.hmacShaKeyFor(decodedKey);
+    }
+
+    private String generateToken(String subject, Long validity) {
+        Map<String, String> claims = new HashMap<>();
+        claims.put("test", "khanthmue.tech");
+
+        return Jwts
+                    .builder()
+                    .claims(claims)
+                    .subject(subject)
+                    .issuedAt(Date.from(Instant.now()))
+                    .expiration(Date.from(Instant.now().plusMillis(validity)))
+                    .signWith(generateKey(), Jwts.SIG.HS256)
+                    .compact();
     }
 }

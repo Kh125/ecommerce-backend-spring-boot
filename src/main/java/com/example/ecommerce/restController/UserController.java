@@ -25,6 +25,9 @@ import com.example.ecommerce.service.UserCRUDService;
 import com.example.ecommerce.service.UserService;
 import com.example.ecommerce.webToken.JwtService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -46,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequestDto authRequestDto) {
+    public ResponseEntity<?> login(@RequestBody AuthRequestDto authRequestDto, HttpServletResponse sResponse) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -57,14 +60,21 @@ public class UserController {
 
             if (authentication.isAuthenticated()) {
                 User userDetails = userCRUDService.getUserInfo(authRequestDto.getUsername());
-                
+                String refreshToken = jwtService.generateRefreshToken(userDetails.getUsername());
+                Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+
                 AuthResponseDto response = new AuthResponseDto(
-                    jwtService.generateToken(authRequestDto.getUsername()),
+                    jwtService.generateAccessToken(userDetails.getUsername()),
                     userDetails.getUsername(),
                     userDetails.getEmail(),
                     userDetails.getRoles()
                 );
                 
+                refreshTokenCookie.setHttpOnly(true);
+                refreshTokenCookie.setSecure(true);
+                refreshTokenCookie.setPath("/");
+                sResponse.addCookie(refreshTokenCookie);
+
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 throw new UsernameNotFoundException("Invalid Credentials");

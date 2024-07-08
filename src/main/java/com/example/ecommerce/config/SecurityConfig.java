@@ -33,7 +33,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(reg -> {
-                reg.requestMatchers("/", "/user/**", "/login", "/api/products/getAllProducts").permitAll();
+                reg.requestMatchers("/", "/user/**", "/login", "/api/products/getAllProducts", "/auth/refreshToken").permitAll();
                 reg.requestMatchers("/api/products/getProductById/**").hasRole("ADMIN");
                 reg.anyRequest().authenticated();
             })
